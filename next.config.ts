@@ -1,11 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // three.js ships modern ESM; transpiling keeps Next's bundler happy across
+  // 100% static app (no API routes / server actions — the waitlist talks to
+  // Supabase from the client). Export to plain HTML/JS, which also skips Next's
+  // serverless file-tracing step that was killing the Vercel build.
+  output: "export",
+  images: { unoptimized: true },
+  // three.js ships modern ESM; transpiling keeps the bundler happy across
   // three / @react-three subpath imports.
   transpilePackages: ["three"],
-  // Stray lockfiles up the tree (umbrella repo, C:\) make Next mis-infer the
-  // workspace root. Pin tracing to this app.
+  // Pin the file-tracing/workspace root to this app so Next never walks up to
+  // parent lockfiles (the umbrella repo / drive root on dev machines).
   outputFileTracingRoot: __dirname,
 };
 
