@@ -29,6 +29,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 import { joinWaitlist } from "@/lib/supabase";
+import { FeedbackButton } from "@/components/FeedbackButton";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -288,6 +289,14 @@ export function MoreTab() {
           </div>
         ))}
       </Card>
+
+      {/* Feedback */}
+      <SectionLabel>Help shape Enchiridion</SectionLabel>
+      <FeedbackButton
+        variant="solid"
+        label="Share demo feedback"
+        className="w-full"
+      />
 
       {/* 7 — Join waitlist CTA */}
       <Card variant="glow" className="mt-5 p-4">

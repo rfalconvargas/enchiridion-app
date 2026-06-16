@@ -13,6 +13,7 @@ import {
 import { HeroCanvas } from "@/components/landing/HeroCanvas";
 import { WaitlistButton } from "@/components/landing/WaitlistButton";
 import { SkullHero } from "@/components/landing/SkullHero";
+import { FeedbackButton } from "@/components/FeedbackButton";
 import { SPINOSAURUS_LESSON } from "@/data/lessons";
 
 // The three core product promises (clear, not generic).
@@ -208,7 +209,11 @@ export default function LandingPage() {
               <ArrowRight size={16} />
             </Link>
             <WaitlistButton variant="outline" />
+            <FeedbackButton variant="outline" />
           </div>
+          <p className="text-xs text-ds-faint">
+            Tried the demo? Your feedback shapes what we build next.
+          </p>
         </section>
         </div>
       </main>

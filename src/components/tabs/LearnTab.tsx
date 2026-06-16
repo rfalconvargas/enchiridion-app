@@ -31,6 +31,7 @@ import {
   type RailControl,
 } from "@/components/three/ControlRail";
 import { ModePanel } from "@/components/three/ModePanel";
+import { FeedbackButton } from "@/components/FeedbackButton";
 
 // Floating anatomical labels overlaid on the viewport when Labels mode is on.
 const FLOATING_LABELS: {
@@ -396,6 +397,13 @@ export function LearnTab() {
             </>
           )}
         </Button>
+
+        {/* Finished the lesson? Tell us what to build next. */}
+        <FeedbackButton
+          variant="outline"
+          label="Share demo feedback"
+          className="w-full"
+        />
       </div>
     </div>
   );

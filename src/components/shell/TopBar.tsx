@@ -2,6 +2,7 @@
 
 import { Activity } from "lucide-react";
 import { useAppState, type TabId } from "@/state/AppState";
+import { FeedbackButton } from "@/components/FeedbackButton";
 
 const TITLES: Record<TabId, string> = {
   home: "Discover",
@@ -33,9 +34,12 @@ export function TopBar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 rounded-full border border-ds-border bg-ds-surface-2 px-2.5 py-1 text-[11px] text-ds-muted">
-        <Activity size={13} className="text-ds-success" />
-        {savedToTree.length} saved
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 rounded-full border border-ds-border bg-ds-surface-2 px-2.5 py-1 text-[11px] text-ds-muted">
+          <Activity size={13} className="text-ds-success" />
+          {savedToTree.length} saved
+        </div>
+        <FeedbackButton variant="icon" />
       </div>
     </header>
   );
