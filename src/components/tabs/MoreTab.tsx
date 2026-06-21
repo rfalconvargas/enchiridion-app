@@ -29,6 +29,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 import { joinWaitlist } from "@/lib/supabase";
+import { track, EVENTS } from "@/lib/analytics";
 import { FeedbackButton } from "@/components/FeedbackButton";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -87,10 +88,16 @@ export function MoreTab() {
   const submitWaitlist = async () => {
     setWaitError(null);
     setWaitLoading(true);
+    track(EVENTS.waitlistSubmit, { placement: "more_tab" });
     const res = await joinWaitlist(waitEmail, "more-tab");
     setWaitLoading(false);
-    if (res.ok) setJoined(true);
-    else setWaitError(res.error);
+    if (res.ok) {
+      setJoined(true);
+      track(EVENTS.waitlistSuccess, { placement: "more_tab", duplicate: !!res.duplicate });
+    } else {
+      setWaitError(res.error);
+      track(EVENTS.waitlistError, { placement: "more_tab", message: res.error });
+    }
   };
 
   // Sync the toggle from the current theme on mount (survives tab switches).
@@ -312,7 +319,10 @@ export function MoreTab() {
         <Button
           variant="primary"
           size="md"
-          onClick={() => setWaitlistOpen(true)}
+          onClick={() => {
+            track(EVENTS.waitlistClick, { placement: "more_tab" });
+            setWaitlistOpen(true);
+          }}
           className="mt-3 w-full"
         >
           Join the Waitlist

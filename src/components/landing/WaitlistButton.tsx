@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Rocket, Mail, Check, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { joinWaitlist } from "@/lib/supabase";
+import { track, EVENTS } from "@/lib/analytics";
 
 const VARIANTS = {
   solid: "bg-ds-primary text-ds-on-primary shadow-ds-glow hover:bg-ds-accent",
@@ -16,9 +17,18 @@ const VARIANTS = {
 export function WaitlistButton({
   variant = "outline",
   className,
+  placement = "landing",
+  onOpen,
+  children,
 }: {
   variant?: keyof typeof VARIANTS;
   className?: string;
+  /** Where on the page this button lives — sent with every waitlist event. */
+  placement?: string;
+  /** Fired when the modal opens — e.g. to emit a context-specific event. */
+  onOpen?: () => void;
+  /** Override the trigger label (defaults to "Join waitlist"). */
+  children?: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -37,26 +47,33 @@ export function WaitlistButton({
   const submit = async () => {
     setError(null);
     setStatus("loading");
-    const result = await joinWaitlist(email, "landing");
+    track(EVENTS.waitlistSubmit, { placement });
+    const result = await joinWaitlist(email, placement);
     if (result.ok) {
       setStatus("joined");
+      track(EVENTS.waitlistSuccess, { placement, duplicate: !!result.duplicate });
     } else {
       setStatus("idle");
       setError(result.error);
+      track(EVENTS.waitlistError, { placement, message: result.error });
     }
   };
 
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          onOpen?.();
+          track(EVENTS.waitlistClick, { placement });
+          setOpen(true);
+        }}
         className={cn(
           "ds-focus inline-flex items-center justify-center gap-2 rounded-[var(--radius-ds)] px-5 py-3 text-sm font-semibold transition-colors",
           VARIANTS[variant],
           className
         )}
       >
-        Join waitlist
+        {children ?? "Join waitlist"}
       </button>
 
       <AnimatePresence>
@@ -96,7 +113,7 @@ export function WaitlistButton({
                     You&apos;re on the list
                   </p>
                   <p className="text-xs text-ds-muted">
-                    We&apos;ll email you when new 3D lessons land.
+                    We&apos;ll email you when new learning expeditions land.
                   </p>
                 </div>
               ) : (
@@ -108,7 +125,7 @@ export function WaitlistButton({
                     </h3>
                   </div>
                   <p className="mt-1 text-sm text-ds-muted">
-                    Be first to try new Enchiridion 3D lessons. No spam.
+                    Be first to try new Enchiridion learning expeditions. No spam.
                   </p>
                   <div className="mt-4 flex items-center gap-2 rounded-[var(--radius-ds)] border border-ds-border bg-ds-surface-3 px-3 py-2.5">
                     <Mail size={15} className="text-ds-faint" />

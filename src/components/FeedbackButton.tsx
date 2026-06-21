@@ -1,5 +1,8 @@
+"use client";
+
 import { MessageSquareHeart } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { track, EVENTS } from "@/lib/analytics";
 
 /** Enchiridion Demo Feedback — Google Form. */
 export const FEEDBACK_URL = "https://forms.gle/hFFBq3xEZk4SQzHa9";
@@ -22,16 +25,20 @@ export function FeedbackButton({
   variant = "solid",
   label = "Share feedback",
   className,
+  placement = "demo",
 }: {
   variant?: Variant;
   label?: string;
   className?: string;
+  /** Where this button lives — sent with the feedback_click event. */
+  placement?: string;
 }) {
   return (
     <a
       href={FEEDBACK_URL}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => track(EVENTS.feedbackClick, { placement })}
       aria-label="Share feedback — opens a Google Form in a new tab"
       title="Share feedback"
       className={cn(

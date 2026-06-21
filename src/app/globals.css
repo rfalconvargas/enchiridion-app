@@ -141,6 +141,108 @@
   --gradient-ds-sky: linear-gradient(160deg, #0c3a36 0%, #062a27 100%);
 }
 
+/* ----------------------------------------------------------------------------
+   KINEFORGE — volcanic/amber cinematic sub-brand scope.
+
+   A sibling identity inside the Enchiridion ecosystem. Applied via the
+   `.kineforge` wrapper on the /kineforge route only, so it never touches the
+   light/Deep-Time app. It redefines the SAME semantic `--color-ds-*` tokens,
+   which means every existing primitive (`ench-cta`, `ench-card`, `ds-glow`,
+   `ds-focus`, `Reveal`…) re-skins itself to volcanic amber for free.
+
+   Direction: volcanic black charcoal · amber fossil highlights · muted
+   bone-white text · the Enchiridion mint-teal kept as the science accent.
+---------------------------------------------------------------------------- */
+.kineforge {
+  --color-ds-primary: #f5a524; /* Amber Fossil — primary actions / key light */
+  --color-ds-primary-deep: #b8740d; /* darker amber — button "lip" / press */
+  --color-ds-secondary: #2dd4bf; /* mint-teal — Enchiridion science accent */
+  --color-ds-accent: #ffc04d; /* warm amber glow — emphasis text & hover */
+  --color-ds-on-primary: #1a1206; /* ink on amber surfaces (AA) */
+
+  --color-ds-bg: #0c0a08; /* volcanic black base */
+  --color-ds-surface: #161210; /* charcoal panel */
+  --color-ds-surface-2: #201a15; /* elevated / hover */
+  --color-ds-surface-3: #120e0b; /* inputs / wells */
+
+  --color-ds-border: #2a2118; /* warm hairline */
+  --color-ds-border-strong: #3c2f22; /* hover / emphasis */
+
+  --color-ds-text: #f3ebdd; /* muted bone-white — primary text */
+  --color-ds-muted: #c4b6a2; /* warm taupe — secondary text (AA) */
+  --color-ds-faint: #95876f; /* faint tertiary (AA on volcanic) */
+
+  --color-ds-success: #5bd08a; /* "today / shipping" green */
+  --color-ds-info: #5be0e2;
+  --color-ds-warning: #ffc857;
+  --color-ds-danger: #ff7a59; /* discovery coral */
+
+  --shadow-ds: 0 1px 2px rgba(0, 0, 0, 0.5), 0 16px 38px rgba(0, 0, 0, 0.5);
+  --shadow-ds-glow: 0 0 0 1px rgba(245, 165, 36, 0.22),
+    0 20px 50px rgba(245, 165, 36, 0.16);
+  --shadow-ds-btn: 0 3px 0 0 var(--color-ds-primary-deep),
+    0 10px 24px rgba(0, 0, 0, 0.55);
+
+  background-color: var(--color-ds-bg);
+  color: var(--color-ds-text);
+}
+
+/* Volcanic backdrop — amber heat low, teal science glow high, dark vignette. */
+.kf-aurora {
+  background-color: #0c0a08;
+  background-image:
+    radial-gradient(64% 48% at 82% -6%, rgba(45, 212, 191, 0.16), transparent 68%),
+    radial-gradient(70% 60% at 14% 4%, rgba(245, 165, 36, 0.18), transparent 70%),
+    radial-gradient(120% 80% at 50% 122%, rgba(184, 116, 13, 0.22), transparent 72%),
+    linear-gradient(180deg, #100c09 0%, #0a0807 60%, #080605 100%);
+}
+
+/* Blueprint / rig-map grid overlay — faint amber lines on volcanic black. */
+.kf-grid {
+  background-image:
+    linear-gradient(rgba(245, 165, 36, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 165, 36, 0.05) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(100% 80% at 50% 30%, #000 35%, transparent 100%);
+  mask-image: radial-gradient(100% 80% at 50% 30%, #000 35%, transparent 100%);
+}
+
+/* Cinematic "display case" stage behind the 3D creature — volcanic floor glow. */
+.kf-stage {
+  background:
+    radial-gradient(110% 80% at 50% 8%, #211913 0%, #14100c 48%, #0a0807 100%);
+}
+
+/* Glass panel tuned for dark volcanic surfaces. */
+.kf-panel {
+  background: color-mix(in srgb, #161210 78%, transparent);
+  border: 1px solid var(--color-ds-border);
+  border-radius: var(--radius-ds);
+  box-shadow: var(--shadow-ds);
+  backdrop-filter: blur(10px);
+}
+
+/* Hairline amber top-edge highlight for "lit from the forge" panels. */
+.kf-lit {
+  position: relative;
+}
+.kf-lit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 165, 36, 0.4),
+    transparent 40%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
 * {
   box-sizing: border-box;
 }

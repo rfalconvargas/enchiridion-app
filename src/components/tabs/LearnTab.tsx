@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -25,6 +25,7 @@ import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/cn";
+import { track, trackOnce, EVENTS } from "@/lib/analytics";
 import {
   ControlRail,
   CONTROL_ICONS,
@@ -85,6 +86,15 @@ export function LearnTab() {
   const step = lesson.lessonSteps[stepIndex];
   const saved = isSaved(lesson.id);
 
+  // One lesson_step event per step shown (covers dots, Back, and Next).
+  useEffect(() => {
+    track(EVENTS.lessonStep, {
+      topic: lesson.id,
+      step_index: stepIndex,
+      step_id: step.id,
+    });
+  }, [lesson.id, stepIndex, step.id]);
+
   const controlsById = useMemo(
     () => new Map(lesson.controls.map((c) => [c.id, c])),
     [lesson]
@@ -97,9 +107,13 @@ export function LearnTab() {
   // Tapping any control toggles its state AND focuses the contextual panel.
   const handleControl = (c: RailControl) => {
     setFocusedControl(c);
+    // Track outside the state updater — updaters must stay pure (React calls
+    // them twice under StrictMode), so a side effect here would double-fire.
+    const turningOn = !active.has(c);
+    track(EVENTS.viewerControlToggle, { control: c, on: turningOn });
     setActive((prev) => {
       const next = new Set(prev);
-      next.has(c) ? next.delete(c) : next.add(c);
+      turningOn ? next.add(c) : next.delete(c);
       return next;
     });
   };
@@ -128,6 +142,12 @@ export function LearnTab() {
           hotspots={[]}
           scale={1}
           resetSignal={resetSignal}
+          onInteract={() =>
+            trackOnce(`3d:${lesson.id}`, EVENTS.threeDInteraction, {
+              surface: "demo_viewer",
+              topic: lesson.id,
+            })
+          }
         />
 
         <div className="pointer-events-none absolute left-3 top-3">

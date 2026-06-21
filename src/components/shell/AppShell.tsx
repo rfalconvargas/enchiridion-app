@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { AppStateProvider, useAppState, type TabId } from "@/state/AppState";
+import { trackOnce, EVENTS } from "@/lib/analytics";
 import { TopBar } from "./TopBar";
 import { BottomNav } from "./BottomNav";
 import { HomeTab } from "@/components/tabs/HomeTab";
@@ -40,6 +42,11 @@ function ActiveTab() {
 }
 
 export function AppShell() {
+  // Opening the full 3D app counts as starting a demo (fires once per load).
+  useEffect(() => {
+    trackOnce("demo:app", EVENTS.demoStarted, { demo: "app" });
+  }, []);
+
   return (
     <AppStateProvider>
       {/* Device-framed column: phone on mobile, centered on desktop. */}

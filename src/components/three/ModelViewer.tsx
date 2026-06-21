@@ -49,6 +49,8 @@ interface ModelViewerProps {
   hotspots: { label: string; position: [number, number, number] }[];
   scale: number;
   resetSignal: number;
+  /** Called when the user starts manipulating the model (orbit/zoom). */
+  onInteract?: () => void;
 }
 
 export default function ModelViewer({
@@ -58,6 +60,7 @@ export default function ModelViewer({
   hotspots,
   scale,
   resetSignal,
+  onInteract,
 }: ModelViewerProps) {
   const controls = useRef<OrbitControlsImpl | null>(null);
 
@@ -113,6 +116,7 @@ export default function ModelViewer({
         maxPolarAngle={Math.PI / 1.9}
         enableDamping
         dampingFactor={0.08}
+        onStart={onInteract}
       />
       <CameraRig controls={controls} resetSignal={resetSignal} />
     </Canvas>

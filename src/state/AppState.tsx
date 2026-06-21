@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { track, EVENTS } from "@/lib/analytics";
 
 export type TabId = "home" | "learn" | "create" | "tree" | "more";
 
@@ -43,7 +44,7 @@ interface AppStateValue {
 const AppStateContext = createContext<AppStateValue | null>(null);
 
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
-  const [activeTab, setActiveTab] = useState<TabId>("home");
+  const [activeTab, setActiveTabState] = useState<TabId>("home");
   const [activeTopicId, setActiveTopicId] = useState<string>("spinosaurus");
   const [savedToTree, setSavedToTree] = useState<string[]>([]);
   const [drafts, setDrafts] = useState<LessonDraft[]>([]);
@@ -73,16 +74,34 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     }
   }, [savedToTree, hydrated]);
 
-  const openLesson = useCallback((topicId: string) => {
-    setActiveTopicId(topicId);
-    setActiveTab("learn");
+  // Tracked tab setter — every tab view is one demo_tab_view event.
+  const setActiveTab = useCallback((tab: TabId) => {
+    track(EVENTS.demoTabView, { tab });
+    setActiveTabState(tab);
   }, []);
 
-  const saveToTree = useCallback((topicId: string) => {
-    setSavedToTree((prev) =>
-      prev.includes(topicId) ? prev : [...prev, topicId]
-    );
-  }, []);
+  const openLesson = useCallback(
+    (topicId: string) => {
+      track(EVENTS.lessonOpen, { topic: topicId });
+      setActiveTopicId(topicId);
+      setActiveTab("learn");
+    },
+    [setActiveTab]
+  );
+
+  const saveToTree = useCallback(
+    (topicId: string) => {
+      // Fire outside the updater (updaters must stay pure / run twice under
+      // StrictMode). Guard on current state so re-saving doesn't double-count.
+      if (!savedToTree.includes(topicId)) {
+        track(EVENTS.lessonSaveToTree, { topic: topicId });
+      }
+      setSavedToTree((prev) =>
+        prev.includes(topicId) ? prev : [...prev, topicId]
+      );
+    },
+    [savedToTree]
+  );
 
   const isSaved = useCallback(
     (topicId: string) => savedToTree.includes(topicId),
@@ -107,6 +126,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       activeTab,
+      setActiveTab,
       activeTopicId,
       openLesson,
       savedToTree,
